@@ -38,16 +38,20 @@ const GuestLogin = () => {
         }
       );
       const result = await response.json();
-
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
       console.log("Server response: ", result);
 
       if (result.success) {
         toast.success(result.message);
+        localStorage.setItem("guest_id", result.data.guest_id);
         navigate("/");
         setTimeout(() => {
-          navigate(0); // 👈 Reload page after 1.5 seconds
+          navigate(0);
         }, 2000);
       } else {
+        localStorage.removeItem("guest_id");
         setErrorMessage(result.message);
       }
     } catch (error) {

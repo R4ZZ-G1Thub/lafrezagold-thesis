@@ -13,7 +13,7 @@ const Bookings = () => {
             EXPLORE OUR OFFERS
           </div>
         </div>
-        <div className="2xl:mb-44">
+        <div className="2xl:mb-8">
           <AccCard />
         </div>
         <div className="text-gray-100 mt-48 sm:mt-6">

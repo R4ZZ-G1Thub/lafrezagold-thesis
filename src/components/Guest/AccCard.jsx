@@ -72,9 +72,9 @@ const AccCard = () => {
             className="w-full 2xl:h-48 p-2 sm:flex-col flex"
           >
             <img
-              src="../../images/gazebo.jpg"
-              alt=""
-              className="object-cover sm:w-full w-36 h-full rounded-md"
+              src={accommodation.image_path || "../../images/gazebo.jpg"} // Show the dynamic image or fallback
+              alt={accommodation.accomodation_name}
+              className="object-cover sm:w-full w-full h-full rounded-md"
             />
             <div className="text-content px-3 py-2 flex flex-col">
               <div>

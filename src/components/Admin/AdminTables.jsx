@@ -4,6 +4,7 @@ import Spinner from "../Spinner";
 import ConfirmAlert from "../ConfirmAlert";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const AdminTables = () => {
   const [admin, setAdmin] = useState([]);
@@ -11,6 +12,8 @@ const AdminTables = () => {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -117,6 +120,14 @@ const AdminTables = () => {
               <td className="w-1/5 py-1 px-2 border">{admin.admin_email}</td>
               <td className="w-1/5 py-1 px-2">
                 <div className="flex justify-center gap-2 ">
+                  <Button
+                    buttonName={"Edit"}
+                    buttonColor={"bg-blue-600"}
+                    buttonHoverColor={"hover:bg-blue-500"}
+                    onClickFunction={() => {
+                      navigate(`/admin/edit-admin/${admin.admin_id}`);
+                    }}
+                  />
                   <Button
                     buttonName={"Delete"}
                     buttonColor={"bg-red-600"}

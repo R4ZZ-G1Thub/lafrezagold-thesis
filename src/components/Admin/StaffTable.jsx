@@ -4,6 +4,7 @@ import Button from "../Button";
 import ConfirmAlert from "../ConfirmAlert";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const StaffTable = () => {
   const [staff, setStaff] = useState([]);
@@ -11,6 +12,8 @@ const StaffTable = () => {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -114,6 +117,14 @@ const StaffTable = () => {
             <td className="w-1/5 py-1 px-2 border">{staff.staff_email}</td>
             <td className="w-1/5 py-1 px-2">
               <div className="flex justify-center gap-2 ">
+                <Button
+                  buttonName={"Edit"}
+                  buttonColor={"bg-blue-600"}
+                  buttonHoverColor={"hover:bg-blue-500"}
+                  onClickFunction={() => {
+                    navigate("/admin/edit-staff");
+                  }}
+                />
                 <Button
                   buttonName={"Delete"}
                   buttonColor={"bg-red-600"}

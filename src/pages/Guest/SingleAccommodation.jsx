@@ -2,19 +2,15 @@ import React, { useEffect, useState } from "react";
 import Spinner from "../../components/Spinner";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
-import Button from "../../components/Button";
 import { Swiper, SwiperSlide } from "swiper/react";
+import Button from "../../components/Button";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ConfirmAlert from "../../components/ConfirmAlert";
 
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Navigation } from "swiper/modules";
-import { number } from "yup";
-import Map from "../../components/Guest/Map";
-import { FaMapMarker } from "react-icons/fa";
 
 const SingleAccommodation = ({ initialStatus }) => {
   const { id } = useParams();
@@ -22,12 +18,12 @@ const SingleAccommodation = ({ initialStatus }) => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [showConfirm, setShowConfirm] = useState(false);
   const [status, setStatus] = useState(initialStatus);
 
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [numberOfDays, setNumberOfDays] = useState(0);
+  const [availabilityError, setAvailabilityError] = useState("");
 
   const [adults, setAdults] = useState(0);
   const [children, setChildren] = useState(0);
@@ -41,7 +37,7 @@ const SingleAccommodation = ({ initialStatus }) => {
     const fetchAccommodation = async () => {
       try {
         const response = await fetch(
-          `http://localhost/lafreza-server/admin/fetch_single_accomodation.php?id=${id}`,
+          `http://localhost/lafreza-server/guest/guest_fetch_single_accommodation.php?id=${id}`,
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -94,7 +90,7 @@ const SingleAccommodation = ({ initialStatus }) => {
   };
 
   // handle date change
-  const handleDateChange = (e, type) => {
+  const handleDateChange = async (e, type) => {
     const value = e.target.value;
     if (type === "from") {
       setDateFrom(value);
@@ -127,6 +123,86 @@ const SingleAccommodation = ({ initialStatus }) => {
   const totalPrice =
     numberOfDays * (accommodation?.price || 0) + totalEntranceFee;
 
+  const guestId = localStorage.getItem("guest_id");
+
+  const handleAddToCart = async () => {
+    if (!dateFrom || !dateTo) {
+      toast.error("Please input date of reservation.");
+      return;
+    }
+
+    if (!guestId) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const cartItem = {
+        guest_id: guestId,
+        accommodation_id: accommodation.id,
+        accommodation_name: accommodation.accomodation_name,
+        date_from: dateFrom,
+        date_to: dateTo,
+        adults,
+        children,
+        total_price: totalPrice,
+      };
+
+      const response = await fetch(
+        "http://localhost/lafreza-server/guest/add_to_cart.php",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(cartItem),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success("Successfully added to cart!");
+        navigate("/cart");
+      } else {
+        console.log("Failed to add to cart", result);
+      }
+    } catch (error) {
+      console.log("Error checking availability: ", error);
+    }
+  };
+
+  const checkAvailability = async (accommodationId, fromDate, toDate) => {
+    try {
+      const response = await fetch(
+        "http://localhost/lafreza-server/guest/check_availability.php",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            accommodation_id: accommodationId,
+            date_from: fromDate,
+            date_to: toDate,
+          }),
+        }
+      );
+      const data = await response.json();
+
+      if (data.success) {
+        setAvailabilityError("");
+      } else {
+        setAvailabilityError(data.message);
+      }
+    } catch (error) {
+      console.error("Availability check failed:", error);
+      setAvailabilityError("Error checking availability.");
+    }
+  };
+
+  useEffect(() => {
+    if (accommodation && dateFrom && dateTo) {
+      checkAvailability(accommodation.id, dateFrom, dateTo);
+    }
+  }, [dateFrom, dateTo]);
+
   if (loading) {
     return <Spinner />;
   }
@@ -137,6 +213,8 @@ const SingleAccommodation = ({ initialStatus }) => {
 
   return (
     <div className=" w-full min-h-screen pt-24 pb-24 guest-form-bg flex justify-center items-center flex-col">
+      {/* <ProgressBar /> */}
+
       <div className="bg-gray-100 w-[340px] sm:w-[1000px] 2xl:w-[1300px] shadow-lg rounded-lg p-5 sm:px-14 sm:pt-10 2xl:px-20 mb-5">
         <div className="mb-10">
           <Link to="/accommodations" className="flex items-center">
@@ -166,29 +244,31 @@ const SingleAccommodation = ({ initialStatus }) => {
                 ))}
               </Swiper>
             </div>
-            <div className="ml-5">
-              <h1 className="text-3xl font-bold mb-4">
-                {accommodation.accomodation_name}
-              </h1>
-              <ul>
-                <li>
-                  <span className="text-gray-500">Type: </span>
-                  {accommodation.accomodation_type}
-                </li>
-                <li>
-                  <span className="text-gray-500">Features: </span>
-                  {accommodation.features}
-                </li>
-                <li>
-                  <span className="text-gray-500">Capacity: </span>
-                  {accommodation.capacity}
-                </li>
-                <li>
-                  <span className="text-gray-500">Price: </span>Php{" "}
-                  {accommodation.price}
-                </li>
-              </ul>
-            </div>
+            {accommodation && (
+              <div className="ml-5">
+                <h1 className="text-3xl font-bold mb-4">
+                  {accommodation.accomodation_name}
+                </h1>
+                <ul>
+                  <li>
+                    <span className="text-gray-500">Type: </span>
+                    {accommodation.accomodation_type}
+                  </li>
+                  <li>
+                    <span className="text-gray-500">Features: </span>
+                    {accommodation.features}
+                  </li>
+                  <li>
+                    <span className="text-gray-500">Capacity: </span>
+                    {accommodation.capacity}
+                  </li>
+                  <li>
+                    <span className="text-gray-500">Price: </span>Php{" "}
+                    {accommodation.price}
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         </div>
         <div className="reservation-date">
@@ -220,6 +300,9 @@ const SingleAccommodation = ({ initialStatus }) => {
               />
             </div>
           </div>
+          {availabilityError && (
+            <p className="text-center mt-5 text-red-500">{availabilityError}</p>
+          )}
           <div className="mt-3 mb-3">
             <span className="font-bold">No. of days:</span>{" "}
             <span>{numberOfDays}</span>
@@ -237,7 +320,7 @@ const SingleAccommodation = ({ initialStatus }) => {
             <div className="flex sm:gap-5 mt-3 flex-col sm:flex-row">
               <div className="flex flex-col">
                 <label htmlFor="adults">
-                  Adults (₱{adultEntranceFee} each)
+                  Adults (Php {adultEntranceFee} each)
                 </label>
                 <input
                   type="number"
@@ -249,7 +332,7 @@ const SingleAccommodation = ({ initialStatus }) => {
               </div>
               <div className="flex flex-col">
                 <label htmlFor="children">
-                  Children (₱{childEntranceFee} each)
+                  Children (Php {childEntranceFee} each)
                 </label>
                 <input
                   type="number"
@@ -269,8 +352,8 @@ const SingleAccommodation = ({ initialStatus }) => {
           {/* Room Price Breakdown */}
           {numberOfDays > 0 ? (
             <p>
-              <span className="text-gray-500">Room Price:</span> ₱
-              {accommodation.price} x {numberOfDays} days = ₱
+              <span className="text-gray-500">Room Price:</span> Php{" "}
+              {accommodation.price} x {numberOfDays} days = Php{" "}
               {accommodation.price * numberOfDays}
             </p>
           ) : (
@@ -283,16 +366,17 @@ const SingleAccommodation = ({ initialStatus }) => {
           {totalEntranceFee > 0 ? (
             <>
               <p className="mt-3">
-                <span className="text-gray-500">Entrance Fee (Adults):</span> ₱
-                {adultEntranceFee} x {adults} = ₱{adults * adultEntranceFee}
+                <span className="text-gray-500">Entrance Fee (Adults):</span>{" "}
+                Php {adultEntranceFee} x {adults} = Php{" "}
+                {adults * adultEntranceFee}
               </p>
               <p>
                 <span className="text-gray-500">Entrance Fee (Children):</span>{" "}
-                ₱{childEntranceFee} x {children} = ₱
+                Php {childEntranceFee} x {children} = Php{" "}
                 {children * childEntranceFee}
               </p>
               <p className="font-bold mt-3">
-                Total Entrance Fee: ₱{totalEntranceFee}
+                Total Entrance Fee: Php {totalEntranceFee}
               </p>
             </>
           ) : (
@@ -302,23 +386,28 @@ const SingleAccommodation = ({ initialStatus }) => {
           {/* Final Total Price */}
           {numberOfDays > 0 && (
             <div className="mt-5 font-bold bg-green-200 py-2 px-4 rounded">
-              Total Price: ₱
+              Total Price: Php{" "}
               {numberOfDays * (accommodation?.price || 0) + totalEntranceFee}
             </div>
           )}
         </div>
       </div>
-      <div className="bg-gray-100 w-[340px] sm:w-[1000px] 2xl:w-[1300px] shadow-lg rounded-lg p-5 sm:px-14 2xl:px-20">
-        <div className="date font-bold">Location</div>
-        <div className="mb-3 flex items-center">
-          <FaMapMarker className="text-yellow-300" />{" "}
-          <span className="ml-2 ">
-            Sitio Crossing Nagbalayong , Morong, Philippines
-          </span>
-        </div>
-        <div className="">
-          <Map />
-        </div>
+
+      <div className="button-next w-[340px] sm:w-[1000px] flex justify-end gap-5">
+        <Button
+          onClickFunction={handleAddToCart}
+          buttonName={"Add to Cart"}
+          buttonColor={"bg-blue-400"}
+          buttonHoverColor={"hover:bg-blue-300"}
+        />
+        <Button
+          onClickFunction={() => {
+            navigate("/checkout");
+          }}
+          buttonName={"Proceed to Checkout"}
+          buttonColor={"bg-yellow-400"}
+          buttonHoverColor={"hover:bg-yellow-300"}
+        />
       </div>
     </div>
   );

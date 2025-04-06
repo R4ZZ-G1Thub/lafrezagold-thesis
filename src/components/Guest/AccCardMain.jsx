@@ -4,15 +4,15 @@ import { Link } from "react-router-dom";
 
 const AccCardMain = ({ accommodation }) => {
   return (
-    <div className="rounded-lg w-full mt-5 sm:mt-0 h-48 sm:h-56 bg-gray-100 shadow-lg py-3 px-4 flex gap-4">
-      <div className="image w-1/3">
+    <div className="rounded-lg w-full mt-5 sm:mt-0 sm:h-60 bg-gray-100 shadow-lg py-3 px-4 flex gap-4">
+      <div className="image w-[400px]">
         <img
-          src="../../images/gazebo.jpg"
-          alt=""
-          className="object-cover sm:w-full w-36 h-full rounded-md"
+          src={accommodation.image_path || "../../images/gazebo.jpg"} // Show the dynamic image or fallback
+          alt={accommodation.accomodation_name}
+          className="object-cover sm:w-full w-full h-full rounded-md"
         />
       </div>
-      <div className="text flex flex-col justify-between sm:w-full sm:pr-2 ">
+      <div className="text flex flex-col justify-between w-full sm:pr-2 ">
         <div>
           <h1 className="sm:text-lg 2xl:text-xl text-md font-bold mb-2">
             {accommodation.accomodation_name}
@@ -29,9 +29,9 @@ const AccCardMain = ({ accommodation }) => {
             </li>
           </ul>
         </div>
-        <div className="text-yellow-400  sm:text-base text-xs flex justify-between items-center">
+        <div className="text-yellow-400  sm:text-base text-xs flex justify-between items-center flex-col sm:flex-row mt-5 ">
           <div className="font-extrabold 2xl:text-xl">
-            ₱ {accommodation.price}
+            Php {accommodation.price}
           </div>
           <Link
             to={`/accommodations/${accommodation.id}`}

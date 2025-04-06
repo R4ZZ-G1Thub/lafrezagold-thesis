@@ -89,7 +89,7 @@ const AddRoom = () => {
   };
 
   return (
-    <section className="w-2/5 mx-auto py-4 mb-4">
+    <section className="w-2/5 mx-auto py-4 mb-4 ">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="container text-gray-900"

@@ -84,7 +84,7 @@ const SidebarMenu = () => {
                 >
                   <div className="flex items-center">
                     <FaDoorClosed className="mr-4" size={18} />
-                    <span>Accomodations</span>
+                    <span>Accommodations</span>
                   </div>
                   <RiArrowDropDownLine size={28} className="items-center" />
                 </button>
@@ -99,7 +99,7 @@ const SidebarMenu = () => {
                       to="/admin/accomodations"
                       className="flex items-center justify-between w-full pl-9 text-gray-900 hover:bg-gray-300 py-2 px-3 rounded-lg"
                     >
-                      All Accomodations
+                      All Accommodations
                     </Link>
                   </li>
                   <li>
@@ -107,7 +107,7 @@ const SidebarMenu = () => {
                       to="/admin/add-accomodations"
                       className="flex items-center justify-between w-full pl-9 text-gray-900 hover:bg-gray-300 py-2 px-3 rounded-lg"
                     >
-                      Add Accomodation
+                      Add Accommodation
                     </Link>
                   </li>
                 </ul>

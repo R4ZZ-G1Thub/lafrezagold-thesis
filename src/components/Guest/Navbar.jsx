@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { FaBars, FaX } from "react-icons/fa6";
+import { FaBars, FaCartShopping, FaX } from "react-icons/fa6";
 import { FaUserCircle } from "react-icons/fa";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import Button from "../Button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -60,7 +60,8 @@ const Navbar = () => {
         setIsLoggedIn(false);
         setActiveDropdown(false);
         navigate("/");
-        checkSession(); // Recheck session after logout
+        checkSession();
+        localStorage.removeItem("guest_id");
         toast.success("Successfully logged out.");
       })
       .catch((error) => {
@@ -70,7 +71,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="bg-black bg-opacity-40 text-gray-200 sm:flex sm:justify-between sm:px-36 py-2 px-6 fixed w-full z-10">
+    <div className="bg-black bg-opacity-40 text-gray-200 sm:flex sm:justify-between sm:px-36 py-2 px-6 fixed w-full z-50">
       <div className="py-4 px-6 flex justify-between items-center">
         <div className="font-bold">LAFREZA GOLD</div>
         <button onClick={ToggleMenu} className="sm:hidden">
@@ -128,8 +129,14 @@ const Navbar = () => {
         {loading ? (
           <p className="text-yellow-400">Loading...</p>
         ) : isLoggedIn ? (
-          <div className="relative">
-            <button className="flex items-center" onClick={toggleDropdown}>
+          <div className="relative flex items-center gap-5">
+            <Link to="/cart" className="flex items-center text-yellow-400">
+              <FaCartShopping size={24} />
+            </Link>
+            <button
+              className="flex items-center text-yellow-400"
+              onClick={toggleDropdown}
+            >
               <FaUserCircle size={28} className="mr-" />
               <RiArrowDropDownLine size={28} />
             </button>
