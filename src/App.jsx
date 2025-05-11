@@ -88,7 +88,7 @@ const App = () => {
           <Route path="/admin/guests-feedback" element={<GuestsFeedback />} />
           <Route path="/admin/manage-staff" element={<ManageStaff />} />
           <Route path="/admin/create-new-staff" element={<CreateNewStaff />} />
-          <Route path="/admin/edit-staff" element={<EditStaff />} />
+          <Route path="/admin/edit-staff/:staff_id" element={<EditStaff />} />
           <Route path="/admin/manage-admins" element={<ManageAdmins />} />
           <Route path="/admin/create-new-admin" element={<CreateNewAdmin />} />
           <Route path="/admin/edit-admin/:admin_id" element={<EditAdmin />} />

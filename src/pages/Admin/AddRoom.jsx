@@ -15,11 +15,13 @@ const schema = yup
     capacity: yup
       .number()
       .required("Capacity is required")
-      .min(1, "Capacity must be greater than 0"),
+      .min(1, "Capacity must be greater than 0")
+      .max(50, "Capacity cannot exceed 50 guests"),
     price: yup
       .number()
       .required("Price is required")
-      .min(1, "Price must be greater than 0"),
+      .min(1, "Price must be greater than 0")
+      .max(50000, "Price cannot exceed Php 50,000"),
   })
   .required();
 

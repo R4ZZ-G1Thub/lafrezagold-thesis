@@ -122,7 +122,7 @@ const StaffTable = () => {
                   buttonColor={"bg-blue-600"}
                   buttonHoverColor={"hover:bg-blue-500"}
                   onClickFunction={() => {
-                    navigate("/admin/edit-staff");
+                    navigate(`/admin/edit-staff/${staff.id}`);
                   }}
                 />
                 <Button

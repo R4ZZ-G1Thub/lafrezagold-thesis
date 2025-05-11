@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa6";
 import Spinner from "../../components/Spinner";
 
-const CreateNewAdmin = () => {
+const EditAdmin = () => {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -213,4 +213,4 @@ const CreateNewAdmin = () => {
   );
 };
 
-export default CreateNewAdmin;
+export default EditAdmin;

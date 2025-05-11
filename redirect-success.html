@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Payment Success</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        text-align: center;
+        padding-top: 100px;
+      }
+
+      button {
+        padding: 10px 20px;
+        background: #10b981;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #059669;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>✅ Payment Successful!</h1>
+    <p>Click the button below to go back to your profile.</p>
+    <button onclick="redirectToProfile()">Go to Profile</button>
+
+    <script>
+      function redirectToProfile() {
+        window.location.href = "/profile";
+      }
+    </script>
+  </body>
+</html>

@@ -20,6 +20,7 @@ const SingleAccommodation = ({ initialStatus }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [status, setStatus] = useState(initialStatus);
 
+  const today = new Date().toISOString().split("T")[0];
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [numberOfDays, setNumberOfDays] = useState(0);
@@ -282,6 +283,7 @@ const SingleAccommodation = ({ initialStatus }) => {
                 type="date"
                 id="date-from"
                 value={dateFrom}
+                min={today}
                 onChange={(e) => handleDateChange(e, "from")}
                 className="rounded-lg p-2 sm:w-[300px]"
               />
@@ -294,7 +296,8 @@ const SingleAccommodation = ({ initialStatus }) => {
               <input
                 type="date"
                 id="date-to"
-                value={dateTo}
+                min={today}
+                value={dateFrom || dateTo}
                 onChange={(e) => handleDateChange(e, "to")}
                 className="rounded-lg p-2 sm:w-[300px]"
               />
